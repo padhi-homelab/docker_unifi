@@ -22,7 +22,8 @@ ARG UNIFI_VERSION=5.13.32
 ARG UNIFI_SOURCE_DEB=https://dl.ui.com/unifi/${UNIFI_VERSION}/unifi_sysvinit_all.deb
 ADD ${UNIFI_SOURCE_DEB} /tmp/unifi.deb
 
-ENV BASEDIR=/usr/lib/unifi \
+ENV DEBIAN_FRONTEND=noninteractive \
+    BASEDIR=/usr/lib/unifi \
     DATADIR=/unifi/data \
     LOGDIR=/unifi/log \
     CERTDIR=/unifi/cert \

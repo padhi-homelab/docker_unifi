@@ -22,13 +22,14 @@ A multiarch [Unifi controller] Docker image, based on [Debian Stretch] (slim).
 #### https://github.com/jacobalberty/unifi-docker
   - My [Dockerfile](Dockerfile) and [entrypoint.sh](root/entrypoint.sh) are largely based on
     the ones available in this repo.
-  - I removed all options for running a local [MongoDB] instance,
+  - I use `chroot --userspec` in place of [gosu], the local [MongoDB] instance,
     and turned off telemetry analytics ([I hope?!][thread]).
   - I merged their docker-build.sh into the Dockerfile and cleaned it up.
 
 
 
 [Debian Stretch]:   https://wiki.debian.org/DebianStretch
+[gosu]:             https://github.com/tianon/gosu/
 [MongoDB]:          https://www.mongodb.com/
 [Unifi controller]: https://www.ui.com/download/unifi/
 
