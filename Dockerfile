@@ -18,9 +18,13 @@ FROM base-${TARGETARCH}${TARGETVARIANT}
 
 
 ARG UNIFI_VERSION=5.13.32
+ARG GOSU_VERSION=1.12
 
 ARG UNIFI_SOURCE_DEB=https://dl.ui.com/unifi/${UNIFI_VERSION}/unifi_sysvinit_all.deb
 ADD ${UNIFI_SOURCE_DEB} /tmp/unifi.deb
+
+ARG GOSU_BINARY=https://github.com/tianon/gosu/releases/download/${GOSU_VERSION}/gosu-${DPKG_ARCH}
+ADD ${GOSU_BINARY} /usr/local/bin/gosu
 
 ENV DEBIAN_FRONTEND=noninteractive \
     BASEDIR=/usr/lib/unifi \
@@ -33,7 +37,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
     UNIFI_GID=999 \
     UNIFI_UID=999
 
-RUN mkdir -p ${CERTDIR} \
+RUN chmod +x /usr/local/bin/gosu \
+ && gosu nobody true \
+ && mkdir -p ${CERTDIR} \
              ${DATADIR} \
              ${LOGDIR} \
              /usr/local/unifi/init.d \
@@ -61,11 +67,15 @@ RUN mkdir -p ${CERTDIR} \
  && rm -rf /tmp/* \
            /var/lib/apt/lists/* \
            /var/tmp/* \
- && chown -R unifi:unifi /usr/lib/unifi \
  && ln -s ${DATADIR} ${BASEDIR}/data \
  && ln -s ${RUNDIR} ${BASEDIR}/run \
  && ln -s ${LOGDIR} ${BASEDIR}/logs \
- && ln -s ${CERTDIR} /var/cert/unifi
+ && ln -s ${CERTDIR} /var/cert/unifi \
+ && chown -R unifi:unifi ${BASEDIR} \
+                         ${CERTDIR} \
+                         ${DATADIR} \
+                         ${LOGDIR} \
+                         ${RUNDIR}
 
 COPY root/ /
 
@@ -85,5 +95,5 @@ ENTRYPOINT ["bash", "/entrypoint.sh"]
 
 CMD ["unifi"]
 
-HEALTHCHECK --start-period=5m \
+HEALTHCHECK --start-period=5m --interval=120s --timeout=5s --retries=3 \
         CMD ["bash", "/health.sh"]

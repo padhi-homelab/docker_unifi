@@ -62,7 +62,7 @@ JVM_MAX_HEAP_SIZE=${JVM_MAX_HEAP_SIZE:-1024M}
 
 MONGOLOCK="${DATAPATH}/db/mongod.lock"
 JVM_EXTRA_OPTS="${JVM_EXTRA_OPTS} -Dunifi.datadir=${DATADIR} -Dunifi.logdir=${LOGDIR} -Dunifi.rundir=${RUNDIR}"
-PIDFILE=/var/run/unifi/unifi.pid
+PIDFILE="${RUNDIR}/unifi.pid"
 
 if [ ! -z "${JVM_MAX_HEAP_SIZE}" ]; then
   JVM_EXTRA_OPTS="${JVM_EXTRA_OPTS} -Xmx${JVM_MAX_HEAP_SIZE}"
@@ -193,7 +193,7 @@ if [[ "${@}" == "unifi" ]]; then
                 chown -R "${UNIFI_UID}:${UNIFI_GID}" "${dir}"
             fi
         done
-        chroot --userspec=unifi:unifi / ${UNIFI_CMD} &
+        gosu unifi:unifi ${UNIFI_CMD} &
     fi
     wait
     log "WARN: unifi service process ended without being signaled? Check for errors in ${LOGDIR}." >&2
