@@ -26,6 +26,9 @@ A multiarch [Unifi controller] Docker image, based on [Debian Stretch] (slim).
     and turned off telemetry analytics ([I hope?!][thread]).
   - I merged their docker-build.sh into the Dockerfile and cleaned it up.
 
+### TODO
+- Switch to Alpine Linux + glibc?
+
 
 
 [Debian Stretch]:   https://wiki.debian.org/DebianStretch
