@@ -14,10 +14,13 @@ ENV DPKG_ARCH=i386
 FROM base AS base-arm64
 ENV DPKG_ARCH=arm64
 
+FROM base AS base-armv7
+ENV DPKG_ARCH=armhf
+
 FROM base-${TARGETARCH}${TARGETVARIANT}
 
 
-ARG UNIFI_VERSION=5.13.32
+ARG UNIFI_VERSION=5.14.23
 ARG GOSU_VERSION=1.12
 
 ARG UNIFI_SOURCE_DEB=https://dl.ui.com/unifi/${UNIFI_VERSION}/unifi_sysvinit_all.deb
@@ -25,6 +28,7 @@ ADD ${UNIFI_SOURCE_DEB} /tmp/unifi.deb
 
 ARG GOSU_BINARY=https://github.com/tianon/gosu/releases/download/${GOSU_VERSION}/gosu-${DPKG_ARCH}
 ADD ${GOSU_BINARY} /usr/local/bin/gosu
+
 
 ENV DEBIAN_FRONTEND=noninteractive \
     BASEDIR=/usr/lib/unifi \
@@ -49,6 +53,10 @@ RUN chmod +x /usr/local/bin/gosu \
              /var/cert \
  && groupadd -r unifi -g $UNIFI_GID \
  && useradd --no-log-init -r -u $UNIFI_UID -g $UNIFI_GID unifi \
+ && mkdir /tmp/unifi-fixed \
+ && dpkg-deb -R /tmp/unifi.deb /tmp/unifi-fixed \
+ && sed -i '/mongodb/d' /tmp/unifi-fixed/DEBIAN/control \
+ && dpkg-deb -b /tmp/unifi-fixed /tmp/unifi-fixed.deb \
  && apt-get update \
  && apt-get upgrade \
  && apt-get install -qy --no-install-recommends \
@@ -61,7 +69,7 @@ RUN chmod +x /usr/local/bin/gosu \
             logrotate \
             openjdk-8-jre-headless \
             procps \
-            /tmp/unifi.deb \
+            /tmp/unifi-fixed.deb \
  && apt-get autoclean \
  && apt-get autoremove --purge -y \
  && rm -rf /tmp/* \
