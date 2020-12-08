@@ -20,7 +20,7 @@ ENV DPKG_ARCH=armhf
 FROM base-${TARGETARCH}${TARGETVARIANT}
 
 
-ARG UNIFI_VERSION=6.0.23
+ARG UNIFI_VERSION=6.0.41
 ARG GOSU_VERSION=1.12
 
 ARG UNIFI_SOURCE_DEB=https://dl.ui.com/unifi/${UNIFI_VERSION}/unifi_sysvinit_all.deb
@@ -90,6 +90,7 @@ COPY root/ /
 VOLUME ["/unifi", "${RUNDIR}"]
 
 EXPOSE 3478/udp \
+       5514/udp \
        6789/tcp \
        8080/tcp \
        8443/tcp \
