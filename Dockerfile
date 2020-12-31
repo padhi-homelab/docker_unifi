@@ -20,7 +20,7 @@ ENV DPKG_ARCH=armhf
 FROM base-${TARGETARCH}${TARGETVARIANT}
 
 
-ARG UNIFI_VERSION=6.0.41
+ARG UNIFI_VERSION=6.0.43
 ARG GOSU_VERSION=1.12
 
 ARG UNIFI_SOURCE_DEB=https://dl.ui.com/unifi/${UNIFI_VERSION}/unifi_sysvinit_all.deb
@@ -58,7 +58,7 @@ RUN chmod +x /usr/local/bin/gosu \
  && sed -i '/mongodb/d' /tmp/unifi-fixed/DEBIAN/control \
  && dpkg-deb -b /tmp/unifi-fixed /tmp/unifi-fixed.deb \
  && apt-get update \
- && apt-get upgrade \
+ && apt-get upgrade -qy \
  && apt-get install -qy --no-install-recommends \
             apt-transport-https \
             binutils \
