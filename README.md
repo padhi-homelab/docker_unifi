@@ -21,9 +21,7 @@ docker run --detach \
 
 Runs Unifi controller on port 8443.
 
-
 _<More details to be added soon>_
-
 
 ---
 
